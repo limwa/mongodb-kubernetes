@@ -13,11 +13,24 @@ if [[ -d "${PROJECT_DIR}"/venv ]]; then
 fi
 
 # in our EVG hosts, python versions are always in /opt/python
-python_bin="/opt/python/${PYTHON_VERSION}/bin/python3"
-if [[ "$(uname)" == "Darwin" ]]; then
-  python_bin="python${PYTHON_VERSION}"
-fi
+function get_python_path() {
+  possible_commands=(
+    "python${PYTHON_VERSION}"
+    "python"
+    "/opt/python/${PYTHON_VERSION}/bin/python3"
+  )
 
+  for command in "${possible_commands[@]}"; do
+    if command -v "${command}" &> /dev/null && "${command}" --version | grep -q "3.13"; then
+      echo "${command}"
+      return
+    fi
+  done
+
+  return 1
+}
+
+python_bin="$(get_python_path)"
 echo "Using python from the following path: ${python_bin}"
 
 "${python_bin}" -m venv venv
