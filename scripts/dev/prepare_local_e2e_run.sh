@@ -11,8 +11,8 @@ source scripts/funcs/multicluster
 source scripts/funcs/kubernetes
 
 if [[ "$(uname)" == "Linux" ]]; then
-  export PATH=/opt/golang/go1.24/bin:${PATH}
-  export GOROOT=/opt/golang/go1.24
+  export GOROOT="${GOROOT:-"/opt/golang/go1.24"}"
+  export PATH=${GOROOT}:${PATH}
 fi
 
 on_exit() {
